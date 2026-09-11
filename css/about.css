@@ -1,0 +1,259 @@
+/* ==========================================================================
+   CACHE LAB - ABOUT & METHODOLOGY STYLES
+   Academic documentation, diagrams, mathematical notes, and limitations
+   ========================================================================== */
+
+.about-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 3rem 0;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.about-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  overflow-wrap: break-word;
+}
+
+.about-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 800px;
+  overflow-wrap: break-word;
+}
+
+/* Article Layout */
+.about-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.about-layout > aside,
+.about-layout > article {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .about-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Sticky Table of Contents */
+.about-toc {
+  position: sticky;
+  top: 5.5rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.toc-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.toc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.toc-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  display: block;
+  overflow-wrap: break-word;
+}
+
+.toc-link:hover {
+  color: var(--accent-teal);
+  text-decoration: underline;
+}
+
+/* Main Article Content */
+.about-content {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .about-content {
+    padding: 1.25rem;
+  }
+}
+
+.about-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.about-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.about-heading {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  overflow-wrap: break-word;
+}
+
+.about-heading .section-num {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--accent-teal);
+  font-weight: 700;
+}
+
+.about-body p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 1.2rem;
+  overflow-wrap: break-word;
+}
+
+/* Architecture ASCII / Schematic Box */
+.schematic-box {
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Variables Grid */
+.variables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.var-card {
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.var-card-type {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-teal);
+  margin-bottom: 0.25rem;
+}
+
+.var-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.var-card-list {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  padding-left: 1.2rem;
+}
+
+.var-card-list li {
+  margin-bottom: 0.25rem;
+}
+
+/* Limitations List */
+.limitations-list {
+  list-style: none;
+  counter-reset: limit-counter;
+  margin: 1.5rem 0;
+  padding-left: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.limitations-list li {
+  counter-increment: limit-counter;
+  position: relative;
+  padding-left: 2.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.925rem;
+  color: var(--text-secondary);
+  overflow-wrap: break-word;
+}
+
+.limitations-list li::before {
+  content: counter(limit-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}

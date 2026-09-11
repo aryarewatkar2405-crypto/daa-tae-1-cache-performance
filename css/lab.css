@@ -1,0 +1,608 @@
+/* ==========================================================================
+   CACHE LAB - LAB SPECIFIC STYLES
+   Interactive Experiment Workspace & Multi-Device Optimizations
+   ========================================================================== */
+
+/* Lab Header Banner */
+.lab-header-banner {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.lab-title-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.lab-title-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 620px;
+}
+
+.lab-preset-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background-color: var(--bg-surface-subtle);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.preset-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+
+.btn-preset {
+  white-space: nowrap;
+  min-height: 36px;
+  padding: 0.3rem 0.75rem;
+  background-color: var(--bg-surface);
+  color: var(--text-primary) !important;
+  border-color: var(--border-strong);
+}
+
+.btn-preset:hover,
+.btn-preset:focus,
+.btn-preset:active {
+  background-color: var(--bg-surface-subtle);
+  color: var(--accent-teal-dark) !important;
+  border-color: var(--accent-teal);
+}
+
+/* Lab Grid: Control Panel + Workspace Output */
+.lab-workspace-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.lab-workspace-grid > aside,
+.lab-workspace-grid > section {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .lab-workspace-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Laboratory Cards */
+.lab-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-subtle);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .lab-card {
+    padding: 1rem 0.85rem;
+  }
+}
+
+.lab-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Form Controls with Accessible Touch Areas */
+.form-group {
+  margin-bottom: 1.15rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.form-label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-val-display {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-teal);
+}
+
+.form-input, .form-select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 0;
+}
+
+.form-input:focus, .form-select:focus {
+  border-color: var(--accent-teal);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-teal-subtle);
+}
+
+.form-range {
+  width: 100%;
+  max-width: 100%;
+  height: 32px;
+  accent-color: var(--accent-teal);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  overflow-wrap: break-word;
+}
+
+.form-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 440px) {
+  .form-two-col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Touch-friendly Checkbox options */
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 38px;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-teal);
+  cursor: pointer;
+}
+
+.controls-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.controls-row-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Memory Hierarchy & Working Set Summary */
+.memory-status-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  .memory-status-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .memory-status-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.metric-box {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  overflow-wrap: break-word;
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow-wrap: break-word;
+}
+
+.metric-sub {
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+  overflow-wrap: break-word;
+}
+
+/* Working Set Bar Visualization */
+.working-set-bar-container {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.bar-track {
+  position: relative;
+  height: 28px;
+  background-color: #E7EAE5;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-subtle);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bar-segment {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-right: 1px dashed var(--border-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-segment-l1 {
+  left: 0;
+  width: 25%;
+  background-color: rgba(6, 95, 70, 0.12);
+  color: var(--state-l1);
+}
+
+.bar-segment-l2 {
+  left: 25%;
+  width: 45%;
+  background-color: rgba(146, 64, 14, 0.12);
+  color: var(--state-l2);
+}
+
+.bar-segment-ram {
+  left: 70%;
+  right: 0;
+  background-color: rgba(159, 18, 57, 0.08);
+  color: var(--state-ram);
+  border-right: none;
+}
+
+.bar-pointer {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 4px;
+  background-color: var(--text-primary);
+  border-radius: 2px;
+  transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
+}
+
+.bar-pointer::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 8px solid var(--text-primary);
+}
+
+.bar-legend {
+  display: flex;
+  gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Benchmark Execution State & Progress */
+.benchmark-progress-area {
+  display: none;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.825rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background-color: var(--border-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--accent-teal);
+  transition: width 0.15s ease;
+}
+
+.progress-status-msg {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  overflow-wrap: break-word;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.chart-wrapper {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    padding: 1rem 0.75rem;
+  }
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.chart-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow-wrap: break-word;
+}
+
+.chart-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  overflow-wrap: break-word;
+}
+
+.chart-canvas-container {
+  width: 100%;
+  max-width: 100%;
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.chart-canvas-container svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+
+.chart-empty-notice {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  width: 90%;
+}
+
+/* Observed Result Interpretation Box */
+.interpretation-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--accent-teal);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.interpretation-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-teal-dark);
+  margin-bottom: 0.5rem;
+}
+
+.interpretation-body {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+/* Chart Tooltip */
+.chart-tooltip {
+  position: absolute;
+  padding: 0.4rem 0.6rem;
+  background: var(--text-primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 50;
+  white-space: nowrap;
+}
