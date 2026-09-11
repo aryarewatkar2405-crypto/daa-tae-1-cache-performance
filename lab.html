@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance Laboratory | Cache-Aware Algorithm Analysis</title>
+  <meta name="description" content="Interactive laboratory measuring empirical search performance against modeled L1 and L2 cache working sets." />
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/lab.css" />
+</head>
+<body>
+
+  <!-- Accessibility Skip Link -->
+  <a href="#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <!-- Site Navigation -->
+  <header class="site-header" role="banner">
+    <div class="nav-container">
+      <a href="index.html" class="site-brand" aria-label="Cache Lab Homepage">
+        <div class="brand-mark" aria-hidden="true">CL</div>
+        <div class="brand-text">
+          <span class="brand-title">CACHE LAB</span>
+          <span class="brand-subtitle">Algorithm Performance</span>
+        </div>
+      </a>
+
+      <!-- Mobile Nav Toggle -->
+      <button class="nav-toggle-btn" id="navToggleBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <nav id="navMenu" class="nav-menu" role="navigation" aria-label="Main Navigation">
+        <a href="index.html" class="nav-link">Overview</a>
+        <a href="lab.html" class="nav-link active" aria-current="page">Performance Lab</a>
+        <a href="about.html" class="nav-link">Methodology</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Lab Workspace Header -->
+  <div class="lab-header-banner">
+    <div class="container">
+      <div class="lab-title-area">
+        <div>
+          <div class="section-label">Interactive Laboratory</div>
+          <h1 style="margin-bottom: 0.35rem;">Performance Laboratory</h1>
+          <p class="lab-title-desc">
+            Run controlled search benchmarks and observe how execution time changes as the working set approaches and exceeds estimated cache capacities.
+          </p>
+        </div>
+
+        <!-- Presets -->
+        <div class="lab-preset-bar" role="group" aria-label="Model Presets">
+          <span class="preset-label">Model Presets:</span>
+          <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="l1" aria-label="Apply Modelled L1 Resident Preset">Modelled L1</button>
+          <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="l2" aria-label="Apply Modelled L2 Resident Preset">Modelled L2</button>
+          <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="ram" aria-label="Apply Beyond L2 Cache Preset">Beyond L2</button>
+          <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="stress" aria-label="Apply Stress Test Preset">Stress Test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Laboratory Workspace -->
+  <main id="mainContent" class="container" style="padding-bottom: 3rem;" role="main">
+    <div class="lab-workspace-grid">
+
+      <!-- LEFT COLUMN: Controls & Configurations -->
+      <aside aria-label="Benchmark Controls">
+        <div class="lab-card">
+          <div class="lab-card-title">
+            <span>Experiment Controls</span>
+            <span class="badge" style="font-size: 0.65rem;">Model Params</span>
+          </div>
+
+          <form id="labControlsForm" onsubmit="return false;" aria-label="Experiment Configuration Form">
+            <!-- Record Count -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label for="inputRecordCountNum" class="form-label">Record Count (N)</label>
+                <span class="form-val-display" id="recordCountDisplay" aria-live="polite"></span>
+              </div>
+              <input type="range" id="inputRecordCountRange" class="form-range" min="500" max="100000" step="500" value="10000" aria-label="Record count range slider" />
+              <input type="number" id="inputRecordCountNum" class="form-input" min="100" max="200000" step="100" value="10000" style="margin-top: 0.35rem;" aria-label="Record count numeric input" />
+              <div class="form-hint">Scale from small sub-L1 sets to large datasets.</div>
+            </div>
+
+            <!-- Record Size -->
+            <div class="form-group">
+              <label for="selectRecordSize" class="form-label">Record Size (Payload)</label>
+              <select id="selectRecordSize" class="form-select">
+                <option value="16">16 Bytes (Minimal Key + Small Payload)</option>
+                <option value="32">32 Bytes (Half Cache Line)</option>
+                <option value="64" selected>64 Bytes (Full Cache Line - Standard)</option>
+                <option value="128">128 Bytes (Dual Cache Lines)</option>
+                <option value="256">256 Bytes (Large Record)</option>
+                <option value="512">512 Bytes (Heavy Record)</option>
+              </select>
+              <div class="form-hint">Working Set = Record Count &times; Record Size.</div>
+            </div>
+
+            <!-- Cache Capacity Parameters -->
+            <div class="form-two-col">
+              <div class="form-group">
+                <label for="inputL1Capacity" class="form-label">Estimated L1 (KB)</label>
+                <input type="number" id="inputL1Capacity" class="form-input" min="8" max="128" step="8" value="32" />
+              </div>
+              <div class="form-group">
+                <label for="inputL2Capacity" class="form-label">Estimated L2 (KB)</label>
+                <input type="number" id="inputL2Capacity" class="form-input" min="64" max="2048" step="64" value="256" />
+              </div>
+            </div>
+
+            <!-- Trials & Target -->
+            <div class="form-two-col">
+              <div class="form-group">
+                <label for="inputTrials" class="form-label">Trials / Reps</label>
+                <input type="number" id="inputTrials" class="form-input" min="1" max="10" value="3" />
+              </div>
+              <div class="form-group">
+                <label for="selectTargetMode" class="form-label">Search Target</label>
+                <select id="selectTargetMode" class="form-select">
+                  <option value="random" selected>Random Key</option>
+                  <option value="first">First Key (Best-Case)</option>
+                  <option value="middle">Middle Key</option>
+                  <option value="last">Last Key (Worst-Case)</option>
+                  <option value="missing">Missing Key (Miss)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Access Pattern -->
+            <div class="form-group">
+              <label for="selectAccessPattern" class="form-label">Linear Access Pattern</label>
+              <select id="selectAccessPattern" class="form-select">
+                <option value="sequential" selected>Sequential (Spatial Locality)</option>
+                <option value="irregular">Irregular (Strided / Shuffled)</option>
+              </select>
+              <div class="form-hint">Tests cache locality disruption under linear scans.</div>
+            </div>
+
+            <!-- Structures to Benchmark -->
+            <fieldset class="form-group" style="margin-top: 1rem; padding-top: 0.75rem; border: none; border-top: 1px solid var(--border-subtle);">
+              <legend class="form-label" style="margin-bottom: 0.5rem; display: block; font-weight: 600;">Search Structures</legend>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label class="checkbox-option">
+                  <input type="checkbox" id="chkLinear" checked />
+                  <span><strong>Linear Array Search</strong> (O(n))</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" id="chkBinaryArr" checked />
+                  <span><strong>Binary Search (Array)</strong> (O(log n))</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" id="chkBst" checked />
+                  <span><strong>Binary Search Tree</strong> (O(log n))</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <!-- Execution Buttons -->
+            <div class="controls-button-group">
+              <button type="button" id="btnRunBenchmark" class="btn btn-primary" style="width: 100%;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                Run Single Benchmark
+              </button>
+              <button type="button" id="btnRunScaling" class="btn btn-secondary" style="width: 100%;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                Run Scaling Experiment
+              </button>
+              <div class="controls-row-buttons">
+                <button type="button" id="btnExportCSV" class="btn btn-outline btn-sm" disabled>Export CSV</button>
+                <button type="button" id="btnReset" class="btn btn-outline btn-sm">Reset</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Academic Distinction Reminder Callout -->
+        <div class="callout callout-info" role="note">
+          <div class="callout-title">Complexity Class Note</div>
+          <p style="font-size: 0.825rem; margin: 0;">
+            Cache pressure increases memory stall latency and constant factor overheads. It does <strong>not</strong> change the formal asymptotic complexity class (e.g. O(n) remains O(n)).
+          </p>
+        </div>
+      </aside>
+
+      <!-- RIGHT COLUMN: Working Set Monitor, Progress, Table, Visualizations -->
+      <section aria-label="Laboratory Visualizations and Results">
+        
+        <!-- Memory Working-Set Monitor -->
+        <div class="memory-status-summary" role="region" aria-label="Memory Working Set Summary">
+          <div class="metric-box">
+            <span class="metric-label">Total Working Set</span>
+            <span class="metric-value" id="metricWorkingSet">640.0 KB</span>
+            <span class="metric-sub" id="metricWorkingSetBytes">655,360 bytes</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Estimated L1 Capacity</span>
+            <span class="metric-value">32 KB</span>
+            <span class="metric-sub">Fastest Level</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Estimated L2 Capacity</span>
+            <span class="metric-value">256 KB</span>
+            <span class="metric-sub">Mid-Tier Cache</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Cache Region Model</span>
+            <span id="metricStatusBadge" class="badge badge-ram" style="align-self: flex-start; margin-top: 0.25rem;">
+              BEYOND L2 (MAIN MEMORY)
+            </span>
+          </div>
+        </div>
+
+        <!-- Horizontal Memory Track Bar -->
+        <div class="working-set-bar-container" role="region" aria-label="Memory Hierarchy Capacity Track">
+          <div class="bar-labels">
+            <span>0 KB</span>
+            <span>Working Set vs. Cache Boundaries</span>
+            <span>Main Memory</span>
+          </div>
+
+          <div class="bar-track" aria-hidden="true">
+            <div id="segL1" class="bar-segment bar-segment-l1">L1 REGION</div>
+            <div id="segL2" class="bar-segment bar-segment-l2">L2 REGION</div>
+            <div id="segRam" class="bar-segment bar-segment-ram">MAIN MEMORY REGION</div>
+            <div id="workingSetPointer" class="bar-pointer" title="Current Working Set Position"></div>
+          </div>
+
+          <div class="bar-legend" aria-hidden="true">
+            <div class="legend-item">
+              <span class="legend-dot" style="background-color: var(--state-l1);"></span>
+              <span>L1 Resident (&le; 32 KB)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background-color: var(--state-l2);"></span>
+              <span>L2 Resident (&le; 256 KB)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background-color: var(--state-ram);"></span>
+              <span>Beyond L2 (&gt; 256 KB)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div id="benchmarkProgressArea" class="benchmark-progress-area" role="status" aria-live="polite">
+          <div class="progress-header">
+            <span>Benchmark in Progress</span>
+            <span id="progressStatusText" class="progress-status-msg">Preparing dataset...</span>
+          </div>
+          <div class="progress-bar-bg" role="progressbar" id="progressBarRole" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div id="progressBarFill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- Benchmark Results Table -->
+        <div class="lab-card">
+          <div class="lab-card-title">
+            <span>Empirical Benchmark Measurements</span>
+            <span class="badge" style="font-size: 0.65rem;">performance.now()</span>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" aria-label="Measured Search Benchmark Results">
+              <thead>
+                <tr>
+                  <th scope="col">Structure</th>
+                  <th scope="col">Working Set</th>
+                  <th scope="col">Avg Execution Time</th>
+                  <th scope="col">Min Time</th>
+                  <th scope="col">Logical Comparisons</th>
+                  <th scope="col">Nodes / Records Visited</th>
+                  <th scope="col">Modeled Region</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+          <div class="table-scroll-hint" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            Scroll table horizontally on smaller screens to view all columns
+          </div>
+        </div>
+
+        <!-- Performance Charts -->
+        <div class="charts-grid">
+          <!-- Chart 1: Working Set vs Execution Time -->
+          <div class="chart-wrapper">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Working Set Size vs. Execution Time</div>
+                <div class="chart-subtitle">Observed wall-clock search latency across cache boundaries (L1/L2 dashed lines).</div>
+              </div>
+              <div style="display: flex; gap: 0.5rem 0.75rem; font-size: 0.75rem; flex-wrap: wrap;">
+                <span style="display: flex; align-items: center; gap: 0.35rem;">
+                  <span style="width: 10px; height: 3px; background-color: var(--color-linear); display: inline-block;" aria-hidden="true"></span> Linear Array
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.35rem;">
+                  <span style="width: 10px; height: 3px; background-color: var(--color-binary-arr); display: inline-block;" aria-hidden="true"></span> Binary Array
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.35rem;">
+                  <span style="width: 10px; height: 3px; background-color: var(--color-bst); display: inline-block;" aria-hidden="true"></span> BST
+                </span>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <svg id="chartTimeSvg" aria-label="Chart showing working set size versus execution time"></svg>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4;">
+              Observed runtime reflects both algorithmic work and the execution environment. Cache-pressure regions indicate the modeled working-set relationship to configured L1/L2 capacities.
+            </div>
+          </div>
+
+          <!-- Chart 2: Logical Comparisons vs Dataset Size -->
+          <div class="chart-wrapper">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Search Work (Logical Comparisons) vs. Dataset Size</div>
+                <div class="chart-subtitle">Pure algorithmic operation growth independent of hardware timing noise.</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <svg id="chartWorkSvg" aria-label="Chart showing logical comparisons versus dataset size"></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Result Interpretation -->
+        <div id="interpretationContainer" class="interpretation-card" style="display: none;" role="status" aria-live="polite">
+          <div class="interpretation-title">Observed Experimental Analysis</div>
+          <div id="interpretationText" class="interpretation-body"></div>
+        </div>
+
+        <!-- Reference Theoretical Matrix -->
+        <div class="lab-card" style="margin-top: 1.5rem;">
+          <div class="lab-card-title">
+            <span>Theoretical Reference: Big-O vs. Memory Characteristics</span>
+          </div>
+          <div class="table-container">
+            <table class="data-table" aria-label="Theoretical complexity matrix and memory characteristics">
+              <thead>
+                <tr>
+                  <th scope="col">Structure</th>
+                  <th scope="col">Time Complexity (Avg)</th>
+                  <th scope="col">Time Complexity (Worst)</th>
+                  <th scope="col">Memory Layout</th>
+                  <th scope="col">Spatial Locality</th>
+                  <th scope="col">Cache Line Utilization</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Linear Array Search</strong></td>
+                  <td class="mono-num">O(n)</td>
+                  <td class="mono-num">O(n)</td>
+                  <td>Contiguous TypedArray</td>
+                  <td>High (Sequential streaming)</td>
+                  <td>Excellent (Adjacent elements pre-cached)</td>
+                </tr>
+                <tr>
+                  <td><strong>Binary Search (Array)</strong></td>
+                  <td class="mono-num">O(log n)</td>
+                  <td class="mono-num">O(log n)</td>
+                  <td>Contiguous TypedArray</td>
+                  <td>Moderate (Strided bisection)</td>
+                  <td>Good (Compact storage, no pointer overhead)</td>
+                </tr>
+                <tr>
+                  <td><strong>Binary Search Tree</strong></td>
+                  <td class="mono-num">O(log n)</td>
+                  <td class="mono-num">O(n)</td>
+                  <td>Node objects on heap</td>
+                  <td>Low (Scattered pointers)</td>
+                  <td>Poor (Object overhead &amp; cache evictions)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div class="brand-mark" style="width: 24px; height: 24px; font-size: 0.75rem;" aria-hidden="true">CL</div>
+            <strong style="color: var(--text-primary); letter-spacing: 0.05em;">CACHE LAB</strong>
+          </div>
+          <p style="font-size: 0.85rem; line-height: 1.5;">
+            An educational academic laboratory for Design and Analysis of Algorithms (DAA). Investigates cache locality, memory hierarchy pressure, and empirical execution time.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="lab.html">Performance Lab</a></li>
+            <li><a href="about.html">Methodology &amp; Limitations</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Technical Integrity</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Executes pure client-side JavaScript. Uses controlled working-set models rather than simulated fake hardware counters.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>DAA Practical Evaluation &mdash; Computer Architecture &amp; Algorithm Performance</div>
+        <div>Ready for GitHub Pages deployment</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts (Strict relative paths) -->
+  <script src="js/searches.js"></script>
+  <script src="js/benchmark.js"></script>
+  <script src="js/visualization.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Mobile Nav Script -->
+  <script>
+    const navBtn = document.getElementById('navToggleBtn');
+    const navMenu = document.getElementById('navMenu');
+    if (navBtn && navMenu) {
+      navBtn.addEventListener('click', () => {
+        const isExpanded = navBtn.getAttribute('aria-expanded') === 'true';
+        navBtn.setAttribute('aria-expanded', !isExpanded);
+        navMenu.classList.toggle('is-open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!navBtn.contains(e.target) && !navMenu.contains(e.target) && navMenu.classList.contains('is-open')) {
+          navMenu.classList.remove('is-open');
+          navBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

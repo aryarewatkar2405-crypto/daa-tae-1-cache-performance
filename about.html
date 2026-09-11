@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Methodology & Analysis | Cache-Aware Algorithm Analysis</title>
+  <meta name="description" content="Academic methodology, architectural memory hierarchy model, and asymptotic complexity analysis for DAA practical." />
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/about.css" />
+</head>
+<body>
+
+  <!-- Accessibility Skip Link -->
+  <a href="#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <!-- Site Navigation -->
+  <header class="site-header" role="banner">
+    <div class="nav-container">
+      <a href="index.html" class="site-brand" aria-label="Cache Lab Homepage">
+        <div class="brand-mark" aria-hidden="true">CL</div>
+        <div class="brand-text">
+          <span class="brand-title">CACHE LAB</span>
+          <span class="brand-subtitle">Algorithm Performance</span>
+        </div>
+      </a>
+
+      <!-- Mobile Nav Toggle -->
+      <button class="nav-toggle-btn" id="navToggleBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <nav id="navMenu" class="nav-menu" role="navigation" aria-label="Main Navigation">
+        <a href="index.html" class="nav-link">Overview</a>
+        <a href="lab.html" class="nav-link">Performance Lab</a>
+        <a href="about.html" class="nav-link active" aria-current="page">Methodology</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="about-header">
+    <div class="container">
+      <div class="section-label">Academic Reference &amp; DAA Framework</div>
+      <h1 class="about-title">Methodology &amp; Theoretical Framework</h1>
+      <p class="about-subtitle">
+        Evaluating the intersection of asymptotic notation, CPU cache hierarchies, and empirical execution latency across array and tree search structures.
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Content Layout -->
+  <main id="mainContent" class="container" style="padding-bottom: 4rem;" role="main">
+    <div class="about-layout">
+      
+      <!-- Sticky Navigation Table of Contents -->
+      <aside aria-label="Article Table of Contents">
+        <div class="about-toc">
+          <div class="toc-title">Table of Contents</div>
+          <ul class="toc-list">
+            <li><a href="#overview" class="toc-link">1. Project Overview</a></li>
+            <li><a href="#problem" class="toc-link">2. Problem Statement</a></li>
+            <li><a href="#research" class="toc-link">3. Research Question</a></li>
+            <li><a href="#complexity" class="toc-link">4. Algorithmic Complexity</a></li>
+            <li><a href="#locality" class="toc-link">5. Cache Locality &amp; Hierarchy</a></li>
+            <li><a href="#method" class="toc-link">6. Experimental Method</a></li>
+            <li><a href="#limitations" class="toc-link">7. Limitations &amp; Honesty</a></li>
+            <li><a href="#conclusion" class="toc-link">8. Conclusion</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Article Content -->
+      <article class="about-content">
+        
+        <!-- 1. Overview -->
+        <section id="overview" class="about-section" aria-labelledby="heading-overview">
+          <h2 id="heading-overview" class="about-heading"><span class="section-num">01.</span> Project Overview</h2>
+          <div class="about-body">
+            <p>
+              In traditional algorithm analysis, data structures and search routines are evaluated primarily through asymptotic notations (such as Big-O, Big-Omega, and Big-Theta). These mathematical abstractions assume the <em>Random Access Machine (RAM) model</em>, which posits that accessing any memory address requires uniform, constant time O(1).
+            </p>
+            <p>
+              Modern computer architecture, however, violates the uniform RAM assumption. CPUs operate at clock frequencies orders of magnitude faster than main memory (DRAM). To bridge this throughput gap, silicon architectures implement a multi-tiered hierarchy of high-speed SRAM caches (L1, L2, and L3).
+            </p>
+            <p>
+              This laboratory provides an empirical framework to study how <strong>working-set capacity</strong>, <strong>memory layout</strong>, and <strong>cache locality</strong> influence real wall-clock performance when processing records that exceed estimated L1 and L2 cache boundaries.
+            </p>
+          </div>
+        </section>
+
+        <!-- 2. Problem Statement -->
+        <section id="problem" class="about-section" aria-labelledby="heading-problem">
+          <h2 id="heading-problem" class="about-heading"><span class="section-num">02.</span> Problem Statement</h2>
+          <div class="about-body">
+            <div class="callout callout-info" role="note">
+              <div class="callout-title">DAA TAE-1 Practical Specification</div>
+              <div style="font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--text-primary);">
+                <strong>Student:</strong> Arya Rewatkar &nbsp;&bull;&nbsp; <strong>USN:</strong> <span class="mono-num">CM24073</span>
+              </div>
+              <p style="font-size: 0.875rem; margin: 0; font-style: italic; color: var(--text-secondary);">
+                &ldquo;Evaluate how cache misses affect asymptotic notations. Measure the performance of linear and non-linear array search structures when processing records that exceed the system's L1/L2 cache capacity.&rdquo;
+              </p>
+            </div>
+            <p>
+              Students often misinterpret this relationship by assuming that hardware cache misses alter an algorithm's mathematical complexity class (for instance, falsely stating that cache misses turn an O(n) algorithm into O(n&sup2;)).
+            </p>
+            <p>
+              The primary objective of this project is to clarify that:
+            </p>
+            <ul style="padding-left: 1.5rem; margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-secondary);">
+              <li><strong>Asymptotic Complexity</strong> governs the mathematical growth rate of fundamental operations as N grows.</li>
+              <li><strong>Cache Misses and Memory Latency</strong> drastically scale the <em>constant factor</em> and physical execution time, creating non-linear latency spikes when working sets spill across cache tiers.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 3. Research Question -->
+        <section id="research" class="about-section" aria-labelledby="heading-research">
+          <h2 id="heading-research" class="about-heading"><span class="section-num">03.</span> Research Question</h2>
+          <div class="about-body">
+            <p style="font-size: 1.05rem; font-weight: 600; color: var(--text-primary); border-left: 3px solid var(--accent-teal); padding-left: 1rem;">
+              "How does increasing the working-set size beyond estimated L1/L2 cache capacities influence the practical performance of different search structures?"
+            </p>
+            <p style="margin-top: 1rem;">
+              To address this question, our controlled experimental model investigates the interplay between:
+            </p>
+            <div class="schematic-box" aria-label="Experimental workflow diagram">
+[Input Size N] &times; [Record Size (bytes)] = [Working-Set Size (bytes)]
+                      &darr;
+[Contiguous Array vs. Heap Pointer Graph]
+                      &darr;
+[Sequential Stride vs. Irregular / Strided Access]
+                      &darr;
+[L1 / L2 Residence vs. Main Memory Pressure Region]
+                      &darr;
+[Measured Empirical Execution Time (ms) via performance.now()]
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Algorithmic Complexity -->
+        <section id="complexity" class="about-section" aria-labelledby="heading-complexity">
+          <h2 id="heading-complexity" class="about-heading"><span class="section-num">04.</span> Algorithmic Complexity Breakdown</h2>
+          <div class="about-body">
+            <p>
+              We evaluate three foundational search paradigms representing distinct memory layouts:
+            </p>
+
+            <div class="table-container">
+              <table class="data-table" aria-label="Complexity comparison table">
+                <thead>
+                  <tr>
+                    <th scope="col">Algorithm</th>
+                    <th scope="col">Best Time</th>
+                    <th scope="col">Average Time</th>
+                    <th scope="col">Worst Time</th>
+                    <th scope="col">Space Complexity</th>
+                    <th scope="col">Storage Mechanism</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Linear Array Search</strong></td>
+                    <td class="mono-num">O(1)</td>
+                    <td class="mono-num">O(n)</td>
+                    <td class="mono-num">O(n)</td>
+                    <td class="mono-num">O(1) auxiliary</td>
+                    <td>Contiguous TypedArray buffer</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Binary Search (Array)</strong></td>
+                    <td class="mono-num">O(1)</td>
+                    <td class="mono-num">O(log n)</td>
+                    <td class="mono-num">O(log n)</td>
+                    <td class="mono-num">O(1) auxiliary</td>
+                    <td>Sorted contiguous TypedArray</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Binary Search Tree (BST)</strong></td>
+                    <td class="mono-num">O(1)</td>
+                    <td class="mono-num">O(log n)</td>
+                    <td class="mono-num">O(n) (unbalanced)</td>
+                    <td class="mono-num">O(n) heap memory</td>
+                    <td>Pointer-linked node objects</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem;">The Constant Factor Difference</h3>
+            <p>
+              Consider a dataset of 100,000 records. A balanced BST requires approximately 17 node comparisons (&sim; log<sub>2</sub> 100,000). A linear search requires on average 50,000 comparisons.
+            </p>
+            <p>
+              However, each comparison in a contiguous array reads sequential memory addresses that are already loaded into the CPU L1 cache line by hardware prefetchers. In contrast, each node comparison in a large BST traverses a heap pointer to a potentially uncached memory address, stalling the CPU pipeline for hundreds of cycles.
+            </p>
+          </div>
+        </section>
+
+        <!-- 5. Cache Locality & Memory Hierarchy -->
+        <section id="locality" class="about-section" aria-labelledby="heading-locality">
+          <h2 id="heading-locality" class="about-heading"><span class="section-num">05.</span> Cache Locality &amp; Memory Architecture</h2>
+          <div class="about-body">
+            <p>
+              CPU caches operate on fixed-size blocks called <strong>cache lines</strong> (typically 64 bytes). When a single byte is accessed, the entire 64-byte block is transferred from main memory into the cache hierarchy.
+            </p>
+
+            <div class="schematic-box" aria-label="CPU memory hierarchy diagram">
++-----------------------------------------------------------+
+|                     CPU Core Registers                    |
++-----------------------------------------------------------+
+                             |  (~0.5 ns, 1 cycle)
++-----------------------------------------------------------+
+|                   L1 Data Cache (32-64 KB)                |
++-----------------------------------------------------------+
+                             |  (~1-1.5 ns, 4-5 cycles)
++-----------------------------------------------------------+
+|                    L2 Cache (256-512 KB)                  |
++-----------------------------------------------------------+
+                             |  (~4-6 ns, 12-14 cycles)
++-----------------------------------------------------------+
+|                 L3 Shared Cache (8-32 MB)                 |
++-----------------------------------------------------------+
+                             |  (~60-100 ns, 150-250 cycles)
++-----------------------------------------------------------+
+|                  Main Memory / DRAM (GBs)                 |
++-----------------------------------------------------------+
+            </div>
+
+            <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem;">Spatial vs. Temporal Locality</h3>
+            <p>
+              <strong>Spatial Locality:</strong> If a memory location is referenced, nearby memory locations are likely to be referenced soon. Contiguous arrays exhibit maximum spatial locality.
+            </p>
+            <p>
+              <strong>Temporal Locality:</strong> If a memory location is referenced, it is likely to be referenced again in the near future.
+            </p>
+            <p>
+              When a search algorithm follows scattered pointers in dynamic heap memory (pointer chasing in linked lists or trees), it exhibits poor spatial locality. Each hop risks a cache miss, causing execution time to degrade dramatically once the tree working set exceeds the L2 cache.
+            </p>
+          </div>
+        </section>
+
+        <!-- 6. Experimental Method -->
+        <section id="method" class="about-section" aria-labelledby="heading-method">
+          <h2 id="heading-method" class="about-heading"><span class="section-num">06.</span> Experimental Method</h2>
+          <div class="about-body">
+            <p>
+              To ensure rigorous scientific methodology, the experiment isolates independent, dependent, and controlled variables:
+            </p>
+
+            <div class="variables-grid">
+              <div class="var-card">
+                <div class="var-card-type">Independent Variables</div>
+                <div class="var-card-title">Configured Inputs</div>
+                <ul class="var-card-list">
+                  <li>Record Count (N: 100 to 200,000)</li>
+                  <li>Record Payload Size (16B – 512B)</li>
+                  <li>Search Structure (Array vs. BST)</li>
+                  <li>Access Pattern (Sequential vs. Irregular)</li>
+                </ul>
+              </div>
+
+              <div class="var-card">
+                <div class="var-card-type">Dependent Variables</div>
+                <div class="var-card-title">Measured Metrics</div>
+                <ul class="var-card-list">
+                  <li>Execution Time (ms via performance.now)</li>
+                  <li>Logical Key Comparisons</li>
+                  <li>Records / Nodes Visited</li>
+                  <li>Modeled Cache-Pressure Region</li>
+                </ul>
+              </div>
+
+              <div class="var-card">
+                <div class="var-card-type">Controlled Variables</div>
+                <div class="var-card-title">Experimental Rigor</div>
+                <ul class="var-card-list">
+                  <li>Identical logical keys across structures</li>
+                  <li>Pre-timing warm-up passes</li>
+                  <li>Multi-trial repetition batching</li>
+                  <li>Zero DOM overhead during measurement</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Limitations & Technical Honesty -->
+        <section id="limitations" class="about-section" aria-labelledby="heading-limitations">
+          <h2 id="heading-limitations" class="about-heading"><span class="section-num">07.</span> Limitations &amp; Technical Honesty</h2>
+          <div class="about-body">
+            <p>
+              In accordance with scientific integrity, we explicitly document the constraints and execution characteristics of this browser-based performance laboratory:
+            </p>
+
+            <ul class="limitations-list">
+              <li>
+                <strong>No Direct Hardware Counter Access:</strong> Web browsers do not expose CPU Performance Monitoring Counters (PMCs) or hardware registers. The L1 and L2 capacities configured in this lab represent <em>modeled experimental boundaries</em> rather than direct silicon queries.
+              </li>
+              <li>
+                <strong>Just-In-Time (JIT) Compilation:</strong> The browser's JavaScript engine (e.g. V8, SpiderMonkey) dynamically optimizes bytecode, inline caches, and loop unrolling. We use warm-up passes to stabilize JIT optimization before timing.
+              </li>
+              <li>
+                <strong>Garbage Collection (GC) Pauses:</strong> Creating and traversing dynamic objects in heap memory (such as BST nodes) may trigger browser GC sweeps. We allocate datasets prior to the timed measurement window to isolate pure traversal time.
+              </li>
+              <li>
+                <strong>Dynamic Voltage and Frequency Scaling (DVFS):</strong> Modern processors dynamically alter clock speeds based on thermal headroom and OS load, introducing natural variance across trials.
+              </li>
+              <li>
+                <strong>Multi-Tenancy &amp; OS Scheduling:</strong> Browser tabs run concurrently with operating system background tasks. Statistical multi-trial averaging helps smooth sporadic scheduling anomalies.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 8. Conclusion -->
+        <section id="conclusion" class="about-section" aria-labelledby="heading-conclusion">
+          <h2 id="heading-conclusion" class="about-heading"><span class="section-num">08.</span> Conclusion</h2>
+          <div class="about-body">
+            <p>
+              Asymptotic complexity remains the foundational language for classifying algorithmic growth. However, practical software engineering and performance analysis require understanding how algorithms interact with silicon hardware.
+            </p>
+            <p>
+              Contiguous memory layouts empower CPU hardware prefetchers and maximize cache line utilization. Pointer-linked data structures offer theoretical sub-linear search complexity, but incur higher per-operation latency when pointer chasing induces cache evictions across large working sets.
+            </p>
+            <p style="margin-top: 1.5rem;">
+              <a href="lab.html" class="btn btn-primary">Proceed to Performance Lab &rarr;</a>
+            </p>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div class="brand-mark" style="width: 24px; height: 24px; font-size: 0.75rem;" aria-hidden="true">CL</div>
+            <strong style="color: var(--text-primary); letter-spacing: 0.05em;">CACHE LAB</strong>
+          </div>
+          <p style="font-size: 0.85rem; line-height: 1.5;">
+            An educational academic laboratory for Design and Analysis of Algorithms (DAA). Investigates cache locality, memory hierarchy pressure, and empirical execution time.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="lab.html">Performance Lab</a></li>
+            <li><a href="about.html">Methodology &amp; Limitations</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Technical Integrity</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Executes pure client-side JavaScript. Uses controlled working-set models rather than simulated fake hardware counters.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>DAA Practical Evaluation &mdash; Computer Architecture &amp; Algorithm Performance</div>
+        <div>Ready for GitHub Pages deployment</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Nav Script -->
+  <script>
+    const navBtn = document.getElementById('navToggleBtn');
+    const navMenu = document.getElementById('navMenu');
+    if (navBtn && navMenu) {
+      navBtn.addEventListener('click', () => {
+        const isExpanded = navBtn.getAttribute('aria-expanded') === 'true';
+        navBtn.setAttribute('aria-expanded', !isExpanded);
+        navMenu.classList.toggle('is-open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!navBtn.contains(e.target) && !navMenu.contains(e.target) && navMenu.classList.contains('is-open')) {
+          navMenu.classList.remove('is-open');
+          navBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
